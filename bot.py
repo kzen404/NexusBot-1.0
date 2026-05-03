@@ -1,6 +1,5 @@
 import discord
 import os
-print("Token encontrado:", bool(os.environ.get('TOKEN')))
 from discord.ext import commands
 from flask import Flask
 from threading import Thread
@@ -13,9 +12,10 @@ def home():
     return "Nexus online!"
 
 def run():
-    app.run(host='0.0.0.0', port=3000)
+    port = int(os.environ.get('PORT', 3000))
+    app.run(host='0.0.0.0', port=port)
 
-Thread(target=run).start()
+Thread(target=run, daemon=True).start()
 
 # Config do bot
 intents = discord.Intents.default()
@@ -23,8 +23,7 @@ intents.message_content = True
 intents.members = True
 bot = commands.Bot(command_prefix='!', intents=intents)
 
-# IDs dos canais
-CANAL_BOAS_VINDAS = 000000000000000000  # troca pelo ID do canal
+CANAL_BOAS_VINDAS = 000000000000000000
 
 @bot.event
 async def on_ready():
@@ -79,4 +78,9 @@ async def site(ctx):
     embed.set_footer(text="Nexus • site.n3xus.workers.dev")
     await ctx.send(embed=embed)
 
-bot.run(os.environ['TOKEN'])
+token = os.environ.get('TOKEN')
+if not token:
+    print("❌ TOKEN não encontrado nas variáveis de ambiente!")
+else:
+    print("✅ Token encontrado, iniciando bot...")
+    bot.run(token)
