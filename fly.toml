@@ -1,0 +1,9 @@
+app = "meu-bot-discord"   # troque por um nome único
+
+[build]
+
+[env]
+
+[[services]]
+
+[checks]
